@@ -1,0 +1,52 @@
+import os
+import sys
+from src.logger import logging
+from src.exception import CustomException
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from dataclasses import dataclass
+from src.components.data_transformation import  DataTransformation
+
+## Initilize data ingetion components
+@dataclass
+class DataIngesationConfig:
+    train_data_path:str = os.path.join('artifcats', 'train.csv')
+    test_data_path:str = os.path.join('artifcats', 'test.csv')
+    raw_data_path:str = os.path.join('artifcats', 'raw.csv')
+
+
+## create a class for Data Ingestion
+class DataIngesation:
+    def __init__(self):
+        self.ingesation_config = DataIngesationConfig()
+
+    def initiate_data_ingestion(self):
+        logging.info("Data Ingestion Started")
+        try:
+            df = pd.read_csv(os.path.join('notebooks/data/gemstone.csv'))
+            logging.info("Dataset read as pandas dataframe")
+
+            os.makedirs(os.path.dirname(self.ingesation_config.raw_data_path), exist_ok=True)
+            df.to_csv(self.ingesation_config.raw_data_path, index=False)
+
+            logging.info('Train test split')
+            train_set, test_set = train_test_split(df, test_size=0.3)
+
+            train_set.to_csv(self.ingesation_config.train_data_path, index=False, header=True)
+            test_set.to_csv(self.ingesation_config.test_data_path, index=False, header=True)
+
+            logging.info('Ingestation of data is completed')
+
+            return(
+                self.ingesation_config.train_data_path,
+                self.ingesation_config.test_data_path
+            )
+
+
+
+        except Exception as e:
+            logging.info("Execption occoured in data ingistation stage")
+            raise CustomException(e, sys)
+
+
