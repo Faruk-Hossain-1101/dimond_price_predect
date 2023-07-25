@@ -7,16 +7,16 @@ application = Flask(__name__)
 
 app = application
 
-@app.route('/')
-def home_page():
-    return render_template('index.html')
+# @app.route('/')
+# def home_page():
+#     return render_template('index.html')
 
 
-@app.route('/predict',methods=['GET','POST'])
+@app.route('/',methods=['GET','POST'])
 
 def predict_datapoint():
     if request.method=='GET':
-        return render_template('form.html')
+        return render_template('index.html')
     
     else:
         data=CustomData(
